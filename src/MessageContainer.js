@@ -19,6 +19,7 @@ export default class MessageContainer extends React.Component{
             if (response.status === 200) {
                 console.log("Machine successfully found.");
                 const myJson = await response.json(); //extract JSON from the http response
+                
                 this.setState({messages: myJson})
                 console.log(myJson);               
             } else {

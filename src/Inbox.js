@@ -7,7 +7,7 @@ export default class Inbox extends React.Component{
 
                 {this.props.groups.map(group => {
                     return(
-                        <Group group={group} key={group.id} user={this.props.user} changeGroup={this.props.changeGroup}/>
+                        <Group group={group} key={group.id} groupClick={this.props.groupClick}user={this.props.user} changeGroup={this.props.changeGroup}/>
                     )
 
                 })}

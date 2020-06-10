@@ -32,13 +32,17 @@ class NavBar extends React.Component{
     
 
     makeActive = (event) => {
-       
-       let a = document.getElementById(this.state.active)
+       if(document.getElementById(this.state.active)){
         document.getElementById(this.state.active).className = "item"
         event.target.className = 'active item'
         this.setState({active: event.target.id})
         this.props.history.location.pathname = "/"
         this.props.history.push(`${event.target.id}`)
+       }else{
+        document.getElementById("/").className = "active item"
+        this.setState({active: "/"})
+       }
+       
         
         
     }
