@@ -5,9 +5,10 @@ import {Route, Switch} from 'react-router-dom'
 import NavBar from './/NavBar'
 import MessagePage from './MessagePage'
 import Login from './Login'
-import FriendContainer from './FriendContainer'
+import ExploreContainer from './ExploreContainer'
 import Profile from './Profile'
 import NewConvoForm from './NewConvoConfirm';
+import Home from './Home'
 
 class App extends React.Component{
 
@@ -63,12 +64,12 @@ class App extends React.Component{
       <div className="App">
         <NavBar user={this.state.currentUser} updateCurrentUser={this.updateCurrentUser}/>
         <Switch>
-        <Route exact path="/" render ={() => this.state.currentUser ? "Home" : <Login updateCurrentUser={this.updateCurrentUser} />}/>
+        <Route exact path="/" render ={() => this.state.currentUser ? <Home currentUser={this.state.currentUser} /> : <Login updateCurrentUser={this.updateCurrentUser} />}/>
         <Route exact path="/about" render ={() => <h1></h1>}/>
         <Route exact path="/messages" render= {() => this.state.currentUser ? <MessagePage user={this.state.currentUser}/> : <Login updateCurrentUser={this.updateCurrentUser} /> }/>
-        <Route exact path="/friends" render ={() => <FriendContainer />} />
-        <Route exact path="/profile" render ={() => this.state.currentUser ? <Profile user={this.state.currentUser} />: <Login updateCurrentUser={this.updateCurrentUser} />}/>
-        <Route exact path="/users/:id" render ={(routerProps) => <Profile id={routerProps.match.params.id}/>}/>
+        <Route exact path="/explore" render ={() => <ExploreContainer />} />
+        <Route exact path="/profile" render ={() => this.state.currentUser ? <Profile currentUser={this.state.currentUser} />: <Login updateCurrentUser={this.updateCurrentUser} />}/>
+        <Route exact path="/users/:id" render ={(routerProps) => <Profile id={routerProps.match.params.id} currentUser={this.state.currentUser}/>}/>
 
         {/* <Route exact path="/login" render ={() => <Login />}/> */}
 

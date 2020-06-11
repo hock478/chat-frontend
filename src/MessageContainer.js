@@ -39,7 +39,7 @@ export default class MessageContainer extends React.Component{
         
         return(
             <div>
-            {this.state.messages.map(message => <Message message={message} user={this.props.user}/>)}
+            {this.state.messages.map(message => <Message key={message.id}message={message} user={this.props.user}/>)}
 
             </div>
         )

@@ -58,8 +58,8 @@ class NavBar extends React.Component{
   <a className="item" onClick={this.makeActive}id="/">
     Home
   </a>
-  {this.props.user ? <a className={this.state.active === "friends" ? "active item" : "item"} onClick={this.makeActive} id="friends">
-    Friends
+  {this.props.user ? <a className={this.state.active === "explore" ? "active item" : "item"} onClick={this.makeActive} id="explore">
+    Explore
   </a> : null}
   {this.props.user ? <a className={this.state.active === "messages" ? "active item" : "item"} onClick={this.makeActive} id="messages">
     Messages

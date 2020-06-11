@@ -55,7 +55,7 @@ export default class Message extends React.Component{
             return(
                 <div class="incoming_msg">
                     <span class="name_mes"> {this.props.message.user.fullname}</span>
-                    <div class="incoming_msg_img"> <img class="ui large circular image" src={this.props.message.user.profile_pic}/> </div>
+                    <div class="incoming_msg_img"> <a href={`/users/${this.props.message.user.id}`}><img class="ui large circular image" src={this.props.message.user.profile_pic}/> </a> </div>
                     <div class="received_msg">
                     
                         <div class="received_withd_msg">

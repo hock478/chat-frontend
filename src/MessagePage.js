@@ -2,24 +2,51 @@ import React from 'react'
 import 'semantic-ui-css/semantic.min.css'
 import Inbox from './Inbox'
 import MessageContainer from './MessageContainer'
+import {Confirm } from 'semantic-ui-react'
+
 export default class MessagePage extends React.Component{
     constructor(){
         super()
         this.state = {
             groups: [],
             groupClick: null,
-            input: ""
+            input: "",
+            open: false,
+            addedUsers: [],
+            inputUser: "",
+            newGroup: null
+            
         }
     }
 
     componentDidMount(){
         fetch(`http://localhost:3000/groups/${this.props.user.id}`)
         .then(res => res.json())
-        .then(data => this.setState({groups: data, groupClick: data[0].id})
+        .then(data => this.setState({groups: data, groupClick: data[0].id, addedUsers: [this.props.user]})
     )
         this.getMachineAction()
     }
 
+
+    show = () => this.setState({ open: true })
+    handleConfirm = () => {
+        if(this.state.addedUsers.length < 1){
+            alert("Add at least one user")
+        }else{
+                fetch("http://localhost:3000/groups", {
+                method: "POST",
+                headers: {"Content-Type": "application/json", "Accept": "application/json"},
+                body: JSON.stringify({
+                    title: null,
+                    user_id: this.props.user.id,
+                    users: this.state.addedUsers
+                })
+            })
+        }
+        this.setState({ open: false })
+    
+    }
+    handleCancel = () => this.setState({ open: false })
     getMachineAction = async () => {
         try {
             const response = await fetch( `http://localhost:3000/groups/${this.props.user.id}`);
@@ -47,6 +74,15 @@ export default class MessagePage extends React.Component{
         messageBody.scrollTop = messageBody.scrollHeight;
     }
 
+    addUser = () => {
+        if(this.props.user.username !== this.state.inputUser){
+        fetch(`http://localhost:3000/specific/${this.state.inputUser}`)
+        .then(res => res.json())
+        .then(data => { this.setState({addedUsers: [...this.state.addedUsers, data]}); console.log(data)})
+        }else{
+            alert("You cant add yourself buddy")
+        }
+    }
     addMessage = () => {
         fetch("http://localhost:3000/messages", {
             method: "POST",
@@ -71,6 +107,8 @@ export default class MessagePage extends React.Component{
     handleMessage = (event) => {
         this.setState({input: event.target.value})
     }
+
+    
     render(){
         return (
             <>
@@ -82,7 +120,7 @@ export default class MessagePage extends React.Component{
                 <div className="inbox_people">
                     <div className="headind_srch">
                         <div className="recent_heading">
-                        <div className="ui button">New Conversation</div>
+                        <div className="ui button" onClick={this.show}>New Conversation</div>
 
                         </div>
                     <div className="srch_bar">
@@ -97,44 +135,6 @@ export default class MessagePage extends React.Component{
                 <div className="mesgs" id="megs">
                 <div className="msg_history" id="meg">
                     <MessageContainer user={this.props.user} groupClick={this.state.groupClick} />
-                    {/* <div className="incoming_msg">
-                    <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"/> </div>
-                    <div className="received_msg">
-                        <div className="received_withd_msg">
-                        <p>Test which is a new approach to have all
-                            solutions</p>
-                        <span className="time_date"> 11:01 AM    |    June 9</span></div>
-                    </div>
-                    </div> */}
-                    {/* <div className="outgoing_msg">
-                    <div className="sent_msg">
-                        <p>Test which is a new approach to have all
-                        solutions</p>
-                        <span className="time_date"> 11:01 AM    |    June 9</span> </div>
-                    </div> */}
-                    {/* <div className="incoming_msg">
-                    <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"/> </div>
-                    <div className="received_msg">
-                        <div className="received_withd_msg">
-                        <p>Test, which is a new approach to have</p>
-                        <span className="time_date"> 11:01 AM    |    Yesterday</span></div>
-                    </div>
-                    </div> */}
-                    {/* <div className="outgoing_msg">
-                    <div className="sent_msg">
-                        <p>Apollo University, Delhi, India Test</p>
-                        <span className="time_date"> 11:01 AM    |    Today</span> </div>
-                    </div> */}
-                    {/* <div className="incoming_msg">
-                    <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"/> </div>
-                    <div className="received_msg">
-                        <div className="received_withd_msg">
-                        <p>We work directly with our designers and suppliers,
-                            and sell direct to you, which means quality, exclusive
-                            products, at a price anyone can afford.</p>
-                        <span className="time_date"> 11:01 AM    |    Today</span></div>
-                    </div>
-                    </div> */}
                 </div>
                 <div className="type_msg">
                     <div className="input_msg_write">
@@ -146,13 +146,53 @@ export default class MessagePage extends React.Component{
 
                 </div>
             </div>
-            
-            
-            {/* <p className="text-center top_spac"> Design by <a target="_blank" href="#">Sunil Rajput</a></p> */}
-            
+                        
             </div>
 
+           
+
             </div>
+            <Confirm
+          open={this.state.open}
+          header='Start a New Conversation'
+          size='tiny'
+          content={
+              <>
+           <div className="ui form">
+ 
+  <div className="equal width fields">
+    <div className="field">
+      <label>Enter Username </label>
+      <input type="text" placeholder="Username..." value={this.state.inputUser} onChange={(event) => this.setState({inputUser: event.target.value})}/>
+    </div>
+    <div className="field">
+      <div className="ui button" onClick={this.addUser}>Add</div>
+    </div>
+ 
+  </div>
+</div>
+<div className="ui list">
+    {this.state.addedUsers.length >= 1 ? this.state.addedUsers.filter(user => user.id !== this.props.user.id).map(user => 
+         <div className="item">
+         <img className="ui avatar image" src={user.profile_pic}/>
+         <div className="content">
+           <a className="header">{user.fullname}</a>
+           <div className=
+           "description">Last seen watching <a><b>Arrested Development</b></a> just now.</div>
+         </div>
+       </div>
+       
+       ) : null}
+ 
+  
+  
+  
+</div>
+            </>
+          }
+          onCancel={() => { this.setState({addedUsers: []});this.handleCancel() }}
+          onConfirm={this.handleConfirm}
+        />
 
 </>
         )
