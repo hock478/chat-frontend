@@ -75,7 +75,7 @@ class NavBar extends React.Component{
         Log In
     </a> */}
     <div className="item">
-  <div className="ui black button">{this.props.user ? <a href="/" onClick={() => localStorage.clear()}>Log Out</a> : <a href="/">Log In</a>}</div>
+  <div className="ui black button" onClick={(event) => event.target.innerText === "Log Out" ? localStorage.clear() : window.location.href = "http://localhost:3001/login"} >{this.props.user ? <a href="/">Log Out</a> : <a href="/login">Log In</a>}</div>
     </div>
   </div>
 </div>

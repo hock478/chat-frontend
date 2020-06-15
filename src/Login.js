@@ -11,7 +11,8 @@ export default class Login extends React.Component{
         bio: "",
         image_url: "",
         password_confirmation: "",
-        signIn: true
+        signIn: true,
+        age: ""
       };
 
     
@@ -57,7 +58,8 @@ export default class Login extends React.Component{
             password_confirmation: this.state.password_confirmation,
             fullname: this.state.fullname,
             bio: this.state.bio,
-            profile_pic: this.state.image_url
+            profile_pic: this.state.image_url,
+            age: this.state.age
             }
           })
         }).then(res => res.json())
@@ -71,6 +73,7 @@ export default class Login extends React.Component{
             // localStorage.setItem("userId", userData.user_data.id)   //added this to store current user 
             
             this.props.updateCurrentUser(userData.user_data.user)   
+            window.location.href = "http://localhost:3001/"
             // this.props.changeLog()
           }
         })
@@ -157,6 +160,8 @@ export default class Login extends React.Component{
                     name="password_confirmation"
                     value={this.state.password_confirmation} onChange={this.handleChange}
                   />
+                    <Form.Input fluid icon='user' iconPosition='left' name="age" placeholder='Enter your age...' value={this.state.age} onChange={this.handleChange} />
+
                   
                    <Form.Input fluid icon='user' iconPosition='left' name="image_url" placeholder='Enter your image...' value={this.state.image_url} onChange={this.handleChange} />
                    <Form.Input fluid icon='user' iconPosition='left' name="bio" placeholder='Enter your bio...' value={this.state.bio} onChange={this.handleChange} />

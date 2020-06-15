@@ -14,10 +14,10 @@ export default class Group extends React.Component{
     }
     render(){
         return(
-            
-            <div className={this.props.group.id === this.props.groupClick ? "chat_list active_chat" : "chat_list"} onClick={() => this.props.changeGroup(this.props.group.id)}>
+            <>
+           <div className={this.props.group.id === this.props.groupClick ? "chat_list active_chat" : "chat_list"} onClick={() => this.props.changeGroup(this.props.group.id)}>
                     <div className="chat_people">
-                    <div className="chat_img"><img className="ui large circular image" src={this.props.group.users.filter(user => user.id !== this.props.user.id)[0].profile_pic}/>
+                    <div className="chat_img"><img className="ui large circular image" src={this.props.group.users.filter(user => user.id !== this.props.user.id)[0] ? this.props.group.users.filter(user => user.id !== this.props.user.id)[0].profile_pic : null}/>
  </div>
                     <div className="chat_ib">
                         <h5>{this.names()}<span className="chat_date">Dec 25</span></h5>
@@ -25,6 +25,8 @@ export default class Group extends React.Component{
                     </div>
                     </div>
                     </div>
+                    </>
+                   
                   
         )
     }

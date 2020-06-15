@@ -19,7 +19,7 @@ export default class Home extends React.Component{
         </div>
         <footer class="ui inverted vertical segment">
           <a href="/">Chatify</a>, by
-          <a href={`users/${this.props.currentUser.id}`}>Dawit Gizaw</a>.
+          <a href={"https://www.linkedin.com/in/dawit-gizaw"}>Dawit Gizaw</a>.
         </footer>
       </div>
        )

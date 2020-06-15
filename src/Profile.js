@@ -46,8 +46,8 @@ class Profile extends React.Component {
         <div className="container">
 	<div className="row">
 		<div className="col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6">
-    	 <div className="well profile">
-         <img className="ui large image" src={this.state.user ? this.state.user.profile_pic : null}/>          
+    	 <div className="well profile" style={{centered: true}}>
+         <img className="ui medium circular image" src={this.state.user ? this.state.user.profile_pic : null}/>          
 
             <div className="col-sm-12">
                 <div className="col-xs-12 col-sm-8">

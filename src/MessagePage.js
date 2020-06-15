@@ -12,19 +12,48 @@ export default class MessagePage extends React.Component{
             groupClick: null,
             input: "",
             open: false,
+            users: [],
             addedUsers: [],
             inputUser: "",
-            newGroup: null
+            newGroup: null,
+            filteredUsers: []
             
         }
     }
 
     componentDidMount(){
+        
         fetch(`http://localhost:3000/groups/${this.props.user.id}`)
         .then(res => res.json())
-        .then(data => this.setState({groups: data, groupClick: data[0].id, addedUsers: [this.props.user]})
-    )
+        .then(data =>             this.setState({groups: data} ))
+        .then(() => {
+            if(this.state.groups[0]){
+                this.setState({groupClick: this.state.groups[0].id})
+                }
+            }
+        ).then(
+            fetch("http://localhost:3000/users")
+            .then(res => res.json())
+            .then(data => this.setState({users: data, addedUsers: [this.props.user]}))
+            
+        )
+       
         this.getMachineAction()
+    }
+
+
+    handleUser = (event) => {
+        console.log("hey")
+        this.setState({inputUser: event.target.value}); 
+        let cloneArr = this.state.users; 
+        if(event.target.value !== ""){
+            cloneArr = this.state.users.filter(user => user.username.includes(event.target.value)); 
+        }else{
+            cloneArr = []
+        }
+        
+        this.setState({filteredUsers: cloneArr}) 
+  
     }
 
 
@@ -74,13 +103,14 @@ export default class MessagePage extends React.Component{
         messageBody.scrollTop = messageBody.scrollHeight;
     }
 
-    addUser = () => {
-        if(this.props.user.username !== this.state.inputUser){
-        fetch(`http://localhost:3000/specific/${this.state.inputUser}`)
+    addUser = (event, user) => {
+        
+        if(!!!this.state.addedUsers.find(userr => userr.id === user.id)){
+        fetch(`http://localhost:3000/users/${user.id}`)
         .then(res => res.json())
         .then(data => { this.setState({addedUsers: [...this.state.addedUsers, data]}); console.log(data)})
         }else{
-            alert("You cant add yourself buddy")
+            alert("You can't add someone more than once")
         }
     }
     addMessage = () => {
@@ -163,34 +193,55 @@ export default class MessagePage extends React.Component{
   <div className="equal width fields">
     <div className="field">
       <label>Enter Username </label>
-      <input type="text" placeholder="Username..." value={this.state.inputUser} onChange={(event) => this.setState({inputUser: event.target.value})}/>
+      <div class="ui search">
+     <div class="ui icon input">  
+      <input type="text" placeholder="Username..."  value={this.state.inputUser} onChange={this.handleUser }/>
+      <i class="search icon"></i>
     </div>
-    <div className="field">
-      <div className="ui button" onClick={this.addUser}>Add</div>
+  <div class="results"></div>
     </div>
+    </div>
+   
  
   </div>
 </div>
 <div className="ui list">
-    {this.state.addedUsers.length >= 1 ? this.state.addedUsers.filter(user => user.id !== this.props.user.id).map(user => 
+    {this.state.filteredUsers.filter(user => user.id !== this.props.user.id).map(user => 
          <div className="item">
          <img className="ui avatar image" src={user.profile_pic}/>
          <div className="content">
-           <a className="header">{user.fullname}</a>
-           <div className=
-           "description">Last seen watching <a><b>Arrested Development</b></a> just now.</div>
+           <a className="header">{user.fullname} ({user.username})</a>
+
+                <div className="ui button" onClick={(event, id) => this.addUser(event,user)}>Add</div>
+
          </div>
        </div>
        
-       ) : null}
- 
-  
+       ) }
   
   
 </div>
+
+<div className="ui list">
+    {this.state.addedUsers.filter(user => user.id !== this.props.user.id).map(user => 
+         <div className="item">
+         <img className="ui avatar image" src={user.profile_pic}/>
+         <div className="content">
+           <a className="header">{user.fullname} ({user.username})</a>
+
+
+         </div>
+       </div>
+       
+       ) }
+  
+  
+</div>
+
+
             </>
           }
-          onCancel={() => { this.setState({addedUsers: []});this.handleCancel() }}
+          onCancel={() => { this.setState({addedUsers: [], filteredUsers: [], inputUser: ""});this.handleCancel() }}
           onConfirm={this.handleConfirm}
         />
 
