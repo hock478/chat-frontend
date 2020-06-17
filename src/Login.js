@@ -40,6 +40,7 @@ export default class Login extends React.Component{
             alert(userData.error_message)
           }else{
             localStorage.setItem("token", userData.token)
+            
             localStorage.setItem("userId", userData.user_data.id)   //added this to store current user 
             this.props.updateCurrentUser(userData.user_data)   
             // this.props.changeLog()
@@ -93,7 +94,7 @@ export default class Login extends React.Component{
          
           <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
             <Grid.Column style={{ maxWidth: 450 }}>
-            <Header as='h2' color='teal' textAlign='center'>
+            <Header as='h2' color='black' textAlign='center'>
             <Icon name='game' /> Log-in to your account
             </Header>
 
@@ -111,7 +112,7 @@ export default class Login extends React.Component{
                     name="password"
                     value={this.state.password} onChange={this.handleChange}
                   />
-                    <Button color='teal' fluid size='large' type="submit">
+                    <Button color='black' fluid size='large' type="submit">
                        Login
                     </Button>
               </Segment> 
@@ -131,7 +132,7 @@ export default class Login extends React.Component{
 
             <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
             <Grid.Column style={{ maxWidth: 450 }}>
-            <Header as='h2' color='teal' textAlign='center'>
+            <Header as='h2' color='black' textAlign='center'>
             <Icon name='game' /> Create Your Account!
             </Header>
 
@@ -166,7 +167,7 @@ export default class Login extends React.Component{
                    <Form.Input fluid icon='user' iconPosition='left' name="image_url" placeholder='Enter your image...' value={this.state.image_url} onChange={this.handleChange} />
                    <Form.Input fluid icon='user' iconPosition='left' name="bio" placeholder='Enter your bio...' value={this.state.bio} onChange={this.handleChange} />
 
-                    <Button color='teal' fluid size='large' type="submit">
+                    <Button color='black' fluid size='large' type="submit">
                        Sign Up
                     </Button>
               </Segment> 

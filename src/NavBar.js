@@ -3,7 +3,6 @@ import 'semantic-ui-css/semantic.min.css'
 import { withRouter,Redirect } from 'react-router-dom';
 
 
-
 class NavBar extends React.Component{
     constructor(){
         super()
@@ -33,11 +32,18 @@ class NavBar extends React.Component{
 
     makeActive = (event) => {
        if(document.getElementById(this.state.active)){
+         if(event.target.id === "explore"){
+          document.getElementById(this.state.active).className = "item"
+          event.target.className = 'active item'
+          this.setState({active: event.target.id})
+          this.props.history.push(`${event.target.id}/${this.props.user.id}`)
+         }else{
         document.getElementById(this.state.active).className = "item"
         event.target.className = 'active item'
         this.setState({active: event.target.id})
         this.props.history.location.pathname = "/"
         this.props.history.push(`${event.target.id}`)
+         }
        }else{
         document.getElementById("/").className = "active item"
         this.setState({active: "/"})

@@ -18,11 +18,14 @@ export default class Message extends React.Component{
         }
         interval = Math.floor(seconds / 86400);
         if (interval >= 1) {
+            if(interval < 2){
+                return "1 day"
+            }
           return interval + " days";
         }
         interval = Math.floor(seconds / 3600);
         if (interval >= 1) {
-            if(interval === 1){
+            if(interval < 2){
                 return "1 hour"
             }
             return interval + " hours";
