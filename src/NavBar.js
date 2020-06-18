@@ -71,9 +71,6 @@ class NavBar extends React.Component{
   {this.props.user ? <a className={this.state.active === "messages" ? "active item" : "item"} onClick={this.makeActive} id="messages">
     Messages
   </a> : null}
-  <a className={this.state.active === "about" ? "active item" : "item"} onClick={this.makeActive} id="about">
-    About
-  </a>
   {this.props.user ? <a className={this.state.active === "profile" ? "active item" : "item"} onClick={this.makeActive} id="profile">
     Profile
         </a> : null }

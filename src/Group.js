@@ -20,7 +20,7 @@ export default class Group extends React.Component{
                     <div className="chat_img"><img className="ui large circular image" src={this.props.group.users.filter(user => user.id !== this.props.user.id)[0] ? this.props.group.users.filter(user => user.id !== this.props.user.id)[0].profile_pic : null}/>
  </div>
                     <div className="chat_ib">
-                        <h5>{this.names()}<span className="chat_date">Dec 25</span></h5>
+                        <h5>{this.names()}</h5>
                         <p>{this.props.group.messages[this.props.group.messages.length - 1] ? this.props.group.messages[this.props.group.messages.length - 1].content : null}</p>
                     </div>
                     </div>

@@ -34,8 +34,25 @@ class Profile extends React.Component {
                 })
             }).then(document.getElementById("fol").innerText = "Unfollow")
             
+        }else{
+            console.log("this works")
+            let fol = this.props.currentUser.following.find(f => f.id == this.props.id).id
+            let id = this.props.currentUser.id
+            fetch("http://localhost:3000/delete_fol", { 
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    user_id: id,
+                    following_id: fol
+                })
+            }).then(document.getElementById("fol").innerText = "Follow")
+
+            
+
         }
     }
+
+    
 
     dateToTime = (t) => {
            
@@ -173,9 +190,9 @@ class Profile extends React.Component {
     </div>
 </div>
 <div class="card-footer">
-    <a href="#" class="card-link"><i class="fa fa-gittip"></i> Like</a>
-    <a href="#" class="card-link"><i class="fa fa-comment"></i> Comment</a>
-    <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a>
+    <a href="#" class="card-link"><i class="fa fa-gittip"></i> View Only</a>
+    {/* <a href="#" class="card-link"><i class="fa fa-comment"></i> Comment</a>
+    <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a> */}
 </div>
 </div>
 

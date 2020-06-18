@@ -15,7 +15,7 @@ export default class Home extends React.Component{
           <p>
             ChatCord is an application intended to connect gamers and friends of any sort to connect in a safe environment.
           </p>
-          <a href="/about"><div class="ui huge button">Learn more</div></a>
+          {!this.props.currentUser ? <a href="/login"><div class="ui huge button">Start Connecting</div></a> : null}
         </div>
         <footer class="ui inverted vertical segment">
           <a href="/">ChatCord</a>, by

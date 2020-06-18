@@ -7,7 +7,6 @@ import MessagePage from './MessagePage'
 import Login from './Login'
 import ExploreContainer from './ExploreContainer'
 import Profile from './Profile'
-import NewConvoForm from './NewConvoConfirm';
 import Home from './Home'
 
 class App extends React.Component{
@@ -50,7 +49,6 @@ class App extends React.Component{
         <NavBar user={this.state.currentUser} updateCurrentUser={this.updateCurrentUser}/>
         <Switch>
         <Route exact path="/" render ={() =>  <Home currentUser={this.state.currentUser} />} />
-        <Route exact path="/about" render ={() => <h1></h1>}/>
         <Route exact path="/messages" render= {() => this.state.currentUser ? <MessagePage user={this.state.currentUser}/> : <Login updateCurrentUser={this.updateCurrentUser} /> }/>
         <Route exact path="/explore/:id" render ={(routerProps) => this.state.currentUser ? routerProps.match.params.id == this.state.currentUser.id  ? <ExploreContainer user={this.state.currentUser} id={routerProps.match.params.id}  /> : null : null}/>
         <Route exact path="/profile" render ={() => this.state.currentUser ? <Profile currentUser={this.state.currentUser} />: <Login updateCurrentUser={this.updateCurrentUser} />}/>

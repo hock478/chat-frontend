@@ -1,10 +1,21 @@
 import React from 'react'
+import {Confirm } from 'semantic-ui-react'
+
 
 export default class ExploreContainer extends React.Component{
     constructor(){
         super()
         this.state = {
             posts: [],
+            input: "",
+            filteredUsers: [],
+            users: [],
+            
+            inputUser: "",
+            header: "",
+            hash_input: [],
+            open: false,
+            add: false
         }
     }
 
@@ -13,6 +24,12 @@ export default class ExploreContainer extends React.Component{
                 fetch(`http://localhost:3000/following_posts/${this.props.id}`)
                 .then(res => res.json())
                 .then(data => this.setState({posts: data }))
+                .then(() => {
+                    fetch("http://localhost:3000/users")
+                    .then(res => res.json())
+                    .then(data => this.setState({users: data}))
+                
+            })   
             }
 
             timeSince(date) {
@@ -55,6 +72,14 @@ export default class ExploreContainer extends React.Component{
 
 
         
+              show = () => {
+                  this.setState({open: true})
+              }
+
+              handleCancel = () => {
+                  this.setState({open: false})
+              }
+        
        dateToTime = (t) => {
            
         let time = t.split(/[- : T]/);
@@ -66,11 +91,36 @@ export default class ExploreContainer extends React.Component{
 
        }
       
+       showAdd = () => {
+           this.setState({add: true})
+       }
+
+       handleConfirm = () => {
+        let hash = this.state.hash_input.split(" ")
+
+
+           fetch("http://localhost:3000/posts",{
+               method: "POST",
+               headers: {"Content-Type": "application/json"},
+               body: JSON.stringify({
+                   user_id: this.props.id,
+                   header: this.state.header,
+                   content: this.state.input,
+                   hash_tags: hash
+               })
+           }).then(res => res.json())
+           .then(data => {
+               this.setState({posts: [data, ...this.state.posts], open: false})
+           })
+       }
+
+       
+      
         
        handleLike = (event, post) => {
 
         
-        if(event.target.innerText === "Like"){
+        if(!post.likes.find(l => l.user_id === this.props.user.id) && event.target.innerText === "Like"){
             fetch("http://localhost:3000/likes", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -85,8 +135,13 @@ export default class ExploreContainer extends React.Component{
         }else{
 
             let like = post.likes.find(l => l.user_id === this.props.id)
-            fetch(`http://localhost:3000/likes/${like.id}`, {
-                method: "DELETE",    
+            fetch(`http://localhost:3000/like_destroy`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    post_id: post.id,
+                    user_id: this.props.id
+                })
              }).then(res => res.json())
              .then(data => {
                 let postArr = [...this.state.posts]
@@ -102,6 +157,20 @@ export default class ExploreContainer extends React.Component{
 
         }
        }
+
+       handleUser = (event) => {
+        console.log("hey")
+        this.setState({inputUser: event.target.value}); 
+        let cloneArr = this.state.users; 
+        if(event.target.value !== ""){
+            cloneArr = this.state.users.filter(user => user.username.includes(event.target.value)); 
+        }else{
+            cloneArr = []
+        }
+        
+        this.setState({filteredUsers: cloneArr}) 
+  
+    }
     
     render(){
         return(
@@ -111,9 +180,9 @@ export default class ExploreContainer extends React.Component{
         <form class="form-inline">
             <div class="input-group">
                 <div class="input-group-append">
-                <input type="text" class="form-control" placeholder="Search for a user..." aria-label="Recipient's username" aria-describedby="button-addon2"/>
-                    <button class="btn btn-outline-primary" type="button" id="button-addon2">
-                        <i class="fa fa-search"></i>
+                <div className="ui button" onClick={this.show}>New Post</div>
+                    <button class="btn btn-outline-primary" onClick={this.showAdd} type="button" id="button-addon2">
+                        <i class="fa fa-search"> Search For a User</i>
                     </button>
 
                 </div>
@@ -161,24 +230,20 @@ export default class ExploreContainer extends React.Component{
             </div>
         </div>
         <div>
-            <div class="dropdown">
+
                 <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-ellipsis-h"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="gedf-drop1">
-                    <div class="h6 dropdown-header">Configuration</div>
-                    <a class="dropdown-item" href="#">Save</a>
-                    <a class="dropdown-item" href="#">Hide</a>
-                    <a class="dropdown-item" href="#">Report</a>
+                    
+                    <a class="dropdown-item" onClick={(event) => alert("This post has been reported and will be reviewed. Thank you!")} href="#">Report</a>
                 </div>
-            </div>
         </div>
     </div>
-
 </div>
 <div class="card-body">
     <div class="text-muted h7 mb-2"> <i class="fa fa-clock-o"></i> {this.dateToTime(post.created_at)} ago</div>
-    <a class="card-link" href="#">
+    <a class="card-link" style={{cursor: "pointer"}}>
         <h5 class="card-title">{post.header}</h5>
     </a>
 
@@ -192,10 +257,11 @@ export default class ExploreContainer extends React.Component{
     </div>
 </div>
 <div class="card-footer">
-    <a href="#" class="card-link" onClick={(event) => this.handleLike(event,post)}><i class="fa fa-gittip"></i>{post.likes.find(like => like.user_id === this.props.id) ? "Unlike" : "Like"}</a>
-    <a href="#" class="card-link"><i class="fa fa-comment"></i> Comment</a>
-    <a href="#" class="card-link"><i class="fa fa-gittip"></i>{post.likes.length === 1 ? 1 : post.likes.length > 1 ? post.likes.length : 0} likes</a>
+    <a style={{cursor: "pointer"}}class="card-link" onClick={(event) => this.handleLike(event,post)}><i class="fa fa-gittip"></i>{post.likes.find(like => like.user_id === this.props.id) ? "Unlike" : "Like"}</a>
+    {/* <a href="#" class="card-link" onClick={(event) => this.handleLike(event,post)}><i class="fa fa-gittip"></i>{post.likes.find(like => like.user_id === this.props.id) ? "Unlike" : "Like"}</a> */}
+    <a style={{cursor: "pointer"}} class="card-link"><i class="fa fa-gittip"></i>{post.likes.length === 1 ? 1 : post.likes.length > 1 ? post.likes.length : 0} likes</a>
 </div>
+
 </div>
 
                 
@@ -224,7 +290,89 @@ export default class ExploreContainer extends React.Component{
                     </div>
             </div>
         </div>
+        
     </div>
+
+    <Confirm
+          open={this.state.open}
+          header='Start a New Conversation'
+          size='tiny'
+          content={
+              <>
+           <div className="ui form">
+ 
+  <div className="equal width fields">
+    <div className="field">
+      <label>Enter Header </label>
+      <div class="ui search">
+     <div class="ui icon input">  
+      <input type="text" placeholder="Enter your header.."  value={this.state.header} onChange={(event) => {this.setState({header: event.target.value})} }/>
+    </div>
+    <div class="field">
+        <label>Short Text</label>
+        <textarea rows="2"></textarea>
+    </div>  
+    <div class="ui icon input">
+    <label>Enter your hashtags(seperate by spaces)</label>
+      <input type="text" placeholder="Enter hashtags..."  value={this.state.hash_input} onChange={(event) => {this.setState({hash_input: event.target.value})} }/>
+    </div>  
+  </div>
+    </div>
+   
+ 
+  </div>
+</div>
+
+            </>
+          }
+          onCancel={() => this.handleCancel() }
+          onConfirm={this.handleConfirm}
+        />
+        <Confirm
+          open={this.state.add}
+          header='Search by username'
+          size='tiny'
+          content={
+              <>
+           <div className="ui form">
+ 
+  <div className="equal width fields">
+    <div className="field">
+      <label>Enter Username </label>
+      <div class="ui search">
+     <div class="ui icon input">  
+      <input type="text" placeholder="Username..."  value={this.state.inputUser} onChange={this.handleUser}/>
+      <i class="search icon"></i>
+    </div>
+  <div class="results"></div>
+    </div>
+    </div>
+   
+ 
+  </div>
+</div>
+<div className="ui list">
+    {this.state.filteredUsers.filter(user => user.id !== this.props.user.id).map(user => 
+         <div className="item">
+         <img className="ui avatar image" src={user.profile_pic}/>
+         <div className="content">
+           <a href={`/users/${user.id}`}className="header">{user.fullname} ({user.username})</a>
+
+                {/* <div className="ui button" onClick={(event, id) => this.addUser(event,user)}>Add</div> */}
+
+         </div>
+       </div>
+       
+       ) }
+  
+  
+</div>
+
+            </>
+          }
+          onCancel={() => { this.setState({filteredUsers: [], inputUser: "", add: false}) }}
+          onConfirm={() => this.setState({add: false})}
+        />
          </>
 
         )
