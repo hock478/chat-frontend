@@ -36,6 +36,7 @@ class NavBar extends React.Component{
           document.getElementById(this.state.active).className = "item"
           event.target.className = 'active item'
           this.setState({active: event.target.id})
+          this.props.history.location.pathname = "/"
           this.props.history.push(`${event.target.id}/${this.props.user.id}`)
          }else{
         document.getElementById(this.state.active).className = "item"

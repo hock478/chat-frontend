@@ -4,7 +4,7 @@ export default class ExploreContainer extends React.Component{
     constructor(){
         super()
         this.state = {
-            posts: []
+            posts: [],
         }
     }
 
@@ -12,12 +12,96 @@ export default class ExploreContainer extends React.Component{
         
                 fetch(`http://localhost:3000/following_posts/${this.props.id}`)
                 .then(res => res.json())
-                .then(data => this.setState({posts: data}))
+                .then(data => this.setState({posts: data }))
             }
+
+            timeSince(date) {
+    
+                var seconds = Math.floor((new Date() - date) / 1000);
+                
+                
+                var interval = Math.floor(seconds / 31536000);
+              
+                if (interval >= 1) {
+                  return interval + " years";
+                }
+                interval = Math.floor(seconds / 2592000);
+                if (interval >= 1) {
+                  return interval + " months";
+                }
+                interval = Math.floor(seconds / 86400);
+                if (interval >= 1) {
+                    if(interval < 2){
+                        return "1 day"
+                    }
+                  return interval + " days";
+                }
+                interval = Math.floor(seconds / 3600);
+                if (interval >= 1) {
+                    if(interval < 2){
+                        return "1 hour"
+                    }
+                    return interval + " hours";
+                }
+                interval = Math.floor(seconds / 60);
+                if (interval >= 1) {
+                    if(interval === 1){
+                        return "1 minute"
+                    }
+                    return interval + " minutes";
+                }
+                return "less than a minute";
+              }
+
+
         
-       
+       dateToTime = (t) => {
+           
+        let time = t.split(/[- : T]/);
+        
+        time[5] = time[5].split(".")[0]
+        let d = new Date(Date.UTC(time[0], time[1]-1, time[2], time[3], time[4], time[5]));
+        let messageTime = this.timeSince(d)
+        return messageTime
+
+       }
       
         
+       handleLike = (event, post) => {
+
+        
+        if(event.target.innerText === "Like"){
+            fetch("http://localhost:3000/likes", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({user_id: this.props.id, post_id: post.id})
+            }).then(res => res.json())
+            .then(data => {
+                let postArr = [...this.state.posts]
+                let i = postArr.indexOf(postArr.find(p => p.id === post.id))
+                postArr[i].likes.push(data)
+                this.setState({posts: postArr})
+            })
+        }else{
+
+            let like = post.likes.find(l => l.user_id === this.props.id)
+            fetch(`http://localhost:3000/likes/${like.id}`, {
+                method: "DELETE",    
+             }).then(res => res.json())
+             .then(data => {
+                let postArr = [...this.state.posts]
+                let i = postArr.indexOf(postArr.find(p => p.id === post.id))
+                let likesArr = postArr[i].likes
+                let ind = likesArr.indexOf(likesArr.find(l => l.id === data.id))
+                likesArr.splice(ind, 1)
+                postArr[i].likes = likesArr
+                this.setState({posts: postArr})
+
+             })
+
+
+        }
+       }
     
     render(){
         return(
@@ -26,11 +110,12 @@ export default class ExploreContainer extends React.Component{
          <nav class="navbar navbar-light bg-white">
         <form class="form-inline">
             <div class="input-group">
-                <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2"/>
                 <div class="input-group-append">
+                <input type="text" class="form-control" placeholder="Search for a user..." aria-label="Recipient's username" aria-describedby="button-addon2"/>
                     <button class="btn btn-outline-primary" type="button" id="button-addon2">
                         <i class="fa fa-search"></i>
                     </button>
+
                 </div>
             </div>
         </form>
@@ -56,7 +141,6 @@ export default class ExploreContainer extends React.Component{
                             <div class="h6 text-muted">Following</div>
                             <div class="h5">{this.props.user? this.props.user.following.length : null}</div>
                         </li>
-                        <li class="list-group-item">Vestibulum at eros</li>
                     </ul>
                 </div>
             </div>
@@ -93,7 +177,7 @@ export default class ExploreContainer extends React.Component{
 
 </div>
 <div class="card-body">
-    <div class="text-muted h7 mb-2"> <i class="fa fa-clock-o"></i> 10 min ago</div>
+    <div class="text-muted h7 mb-2"> <i class="fa fa-clock-o"></i> {this.dateToTime(post.created_at)} ago</div>
     <a class="card-link" href="#">
         <h5 class="card-title">{post.header}</h5>
     </a>
@@ -102,18 +186,15 @@ export default class ExploreContainer extends React.Component{
        {post.content}
     </p>
     <div>
-        <span class="badge badge-primary">JavaScript</span>
-        <span class="badge badge-primary">Android</span>
-        <span class="badge badge-primary">PHP</span>
-        <span class="badge badge-primary">Node.js</span>
-        <span class="badge badge-primary">Ruby</span>
-        <span class="badge badge-primary">Paython</span>
+        {post.hash_tags.map(h =>  <span class="badge badge-primary">#{h}</span>
+)}
+       
     </div>
 </div>
 <div class="card-footer">
-    <a href="#" class="card-link"><i class="fa fa-gittip"></i> Like</a>
+    <a href="#" class="card-link" onClick={(event) => this.handleLike(event,post)}><i class="fa fa-gittip"></i>{post.likes.find(like => like.user_id === this.props.id) ? "Unlike" : "Like"}</a>
     <a href="#" class="card-link"><i class="fa fa-comment"></i> Comment</a>
-    <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a>
+    <a href="#" class="card-link"><i class="fa fa-gittip"></i>{post.likes.length === 1 ? 1 : post.likes.length > 1 ? post.likes.length : 0} likes</a>
 </div>
 </div>
 

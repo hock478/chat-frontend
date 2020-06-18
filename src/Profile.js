@@ -37,6 +37,54 @@ class Profile extends React.Component {
         }
     }
 
+    dateToTime = (t) => {
+           
+        let time = t.split(/[- : T]/);
+        
+        time[5] = time[5].split(".")[0]
+        let d = new Date(Date.UTC(time[0], time[1]-1, time[2], time[3], time[4], time[5]));
+        let messageTime = this.timeSince(d)
+        return messageTime
+
+       }
+
+       timeSince(date) {
+    
+        var seconds = Math.floor((new Date() - date) / 1000);
+        
+        
+        var interval = Math.floor(seconds / 31536000);
+      
+        if (interval >= 1) {
+          return interval + " years";
+        }
+        interval = Math.floor(seconds / 2592000);
+        if (interval >= 1) {
+          return interval + " months";
+        }
+        interval = Math.floor(seconds / 86400);
+        if (interval >= 1) {
+            if(interval < 2){
+                return "1 day"
+            }
+          return interval + " days";
+        }
+        interval = Math.floor(seconds / 3600);
+        if (interval >= 1) {
+            if(interval < 2){
+                return "1 hour"
+            }
+            return interval + " hours";
+        }
+        interval = Math.floor(seconds / 60);
+        if (interval >= 1) {
+            if(interval === 1){
+                return "1 minute"
+            }
+            return interval + " minutes";
+        }
+        return "less than a minute";
+      }
     
     
     render(){
@@ -79,6 +127,60 @@ class Profile extends React.Component {
             </div>
     	 </div>                 
 		</div>
+        {this.state.user && this.state.user.posts.length >= 1 ? this.state.user.posts.map(post => 
+
+<div class="card gedf-card">
+<div class="card-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="mr-2">
+                <a href={`/users/${post.user_id}`}><img class="rounded-circle" width="45" src={this.state.user.profile_pic} alt=""/> </a>
+            </div>
+            <div class="ml-2">
+                <div class="h5 m-0">@{this.state.user.username}</div>
+                <div class="h7 text-muted">{this.state.user.fullname}</div>
+            </div>
+        </div>
+        <div>
+            <div class="dropdown">
+                <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-ellipsis-h"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="gedf-drop1">
+                    <div class="h6 dropdown-header">Configuration</div>
+                    <a class="dropdown-item" href="#">Save</a>
+                    <a class="dropdown-item" href="#">Hide</a>
+                    <a class="dropdown-item" href="#">Report</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="card-body">
+    <div class="text-muted h7 mb-2"> <i class="fa fa-clock-o"></i> {this.dateToTime(post.created_at)} ago</div>
+    <a class="card-link" href="#">
+        <h5 class="card-title">{post.header}</h5>
+    </a>
+
+    <p class="card-text">
+       {post.content}
+    </p>
+    <div>
+        {post.hash_tags.map(h =>  <span class="badge badge-primary">#{h}</span>)}
+       
+       
+    </div>
+</div>
+<div class="card-footer">
+    <a href="#" class="card-link"><i class="fa fa-gittip"></i> Like</a>
+    <a href="#" class="card-link"><i class="fa fa-comment"></i> Comment</a>
+    <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a>
+</div>
+</div>
+
+                
+) : null }
 	</div>
     
         </>
