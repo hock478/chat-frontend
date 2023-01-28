@@ -81,9 +81,10 @@ export default class MessagePage extends React.Component{
             const response = await fetch( `http://localhost:3000/groups/${this.props.user.id}`);
             if (response.status === 200) {
                 console.log("Machine successfully found.");
-                const myJson = await response.json(); //extract JSON from the http response
-                this.setState({groups: myJson})
-                console.log(myJson);               
+                const newMessages = await response.json(); //extract JSON from the http response
+                this.setState({groups: newMessages})
+                this.updateScroll()
+                console.log(newMessages);               
             } else {
                 console.log("not a 200");
             }
@@ -92,7 +93,7 @@ export default class MessagePage extends React.Component{
             console.log(err);
         } finally {
             // do it again in .5 seconds
-            setTimeout(this.getMachineAction , 250);
+            setTimeout(this.getMachineAction , 1000);
         }
     };
     changeGroup = (id) => {
@@ -126,6 +127,7 @@ export default class MessagePage extends React.Component{
         })
         .then(res => res.json())
         .then(data => {
+            this.setState({input: ""})
             this.updateScroll()
             if(data.error){
                 console.log(data.error)
@@ -168,7 +170,7 @@ export default class MessagePage extends React.Component{
                 </div>
                 <div className="type_msg">
                     <div className="input_msg_write">
-                    <input type="text" className="write_msg" placeholder="Type a message" onChange={this.handleMessage} />
+                    <input type="text" className="write_msg" placeholder="Type a message" onChange={this.handleMessage} value={this.state.input}/>
                     <button className="msg_send_btn" onClick={this.addMessage} type="button"><i className="fa fa-paper-plane-o" aria-hidden="true"></i></button>
                     </div>
                 </div>

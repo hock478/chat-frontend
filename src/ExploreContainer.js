@@ -217,7 +217,7 @@ export default class ExploreContainer extends React.Component{
             <div class="col-md-6 gedf-main">
             {this.state.posts.map(post => 
 
-<div class="card gedf-card">
+<div class="card gedf-card" key={post.id}>
 <div class="card-header">
     <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex justify-content-between align-items-center">
@@ -251,13 +251,13 @@ export default class ExploreContainer extends React.Component{
        {post.content}
     </p>
     <div>
-        {post.hash_tags.map(h =>  <span class="badge badge-primary">#{h}</span>
+        {post.hash_tags.map(h =>  <span class="badge badge-primary" key={h}>#{h}</span>
 )}
        
     </div>
 </div>
 <div class="card-footer">
-    <a style={{cursor: "pointer"}}class="card-link" onClick={(event) => this.handleLike(event,post)}><i class="fa fa-gittip"></i>{post.likes.find(like => like.user_id === this.props.id) ? "Unlike" : "Like"}</a>
+    <a style={{cursor: "pointer"}}class="card-link" onClick={(event) => this.handleLike(event,post)}><i class="fa fa-gittip" onClick={(event) => this.handleLike(event,post)}></i>{post.likes.find(like => like.user_id === this.props.id) ? "Unlike" : "Like"}</a>
     {/* <a href="#" class="card-link" onClick={(event) => this.handleLike(event,post)}><i class="fa fa-gittip"></i>{post.likes.find(like => like.user_id === this.props.id) ? "Unlike" : "Like"}</a> */}
     <a style={{cursor: "pointer"}} class="card-link"><i class="fa fa-gittip"></i>{post.likes.length === 1 ? 1 : post.likes.length > 1 ? post.likes.length : 0} likes</a>
 </div>
@@ -270,24 +270,11 @@ export default class ExploreContainer extends React.Component{
             <div class="col-md-3">
                 <div class="card gedf-card">
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                            card's content.</p>
-                        <a href="#" class="card-link">Card link</a>
-                        <a href="#" class="card-link">Another link</a>
+                        <h5 class="card-title">Tip #1</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Help us report pussies</h6>
+                        <p class="card-text">If you click on the 3 dots on the top right of a post, you can report a post for misconduct</p>
                     </div>
                 </div>
-                <div class="card gedf-card">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                                card's content.</p>
-                            <a href="#" class="card-link">Card link</a>
-                            <a href="#" class="card-link">Another link</a>
-                        </div>
-                    </div>
             </div>
         </div>
         
